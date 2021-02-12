@@ -10,16 +10,23 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:angular-buddy.helloWorld"
+    "onCommand:angular-buddy.createFunctionOnComponent"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "angular-buddy.helloWorld",
-        "title": "Hello World"
+        "command": "angular-buddy.createFunctionOnComponent",
+        "title": "Angular Buddy: Create function on component"
       }
-    ]
+    ],
+    "menus": {
+      "explorer/context": [{
+          "when": "resourceLangId == html",
+          "command": "angular-buddy.createFunctionOnComponent",
+          "group": "1_modification"
+      }]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
