@@ -1,7 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { getCurrentComponentName, getCurrentFolderRelativePath, getWorkspaceDocuments } from './workspace';
+import { getLineToAddFunction } from './component-inspector';
+import { addFunction } from './file-editor';
+import { getComponentDocument, getCurrentComponentName, getCurrentFolderRelativePath, getWorkspaceDocuments } from './workspace';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -13,20 +15,18 @@ export async function activate(context: vscode.ExtensionContext) {
 			const componentName = getCurrentComponentName(activeEditorAbsolutePath);
 			const folderPath = getCurrentFolderRelativePath(activeEditorAbsolutePath);
 
-			let docs: vscode.TextDocument[] = await getWorkspaceDocuments(`${folderPath}/${componentName}*.ts`, "**/*.spec.ts");
-			let startPosition: vscode.Position = new vscode.Position(0, 0);
-			docs.forEach(doc => {
-				const text = doc.getText();
-				const fileName = doc.fileName;
-				const isComponentFile = Boolean(text.match('@Component'));
+			const tsDocs: vscode.TextDocument[] = await getWorkspaceDocuments(`${folderPath}/${componentName}*.ts`, "**/*.spec.ts");
+			const componentDoc = getComponentDocument(tsDocs);
 
-				if (isComponentFile) {
-					let endPosition: vscode.Position = new vscode.Position(doc.lineCount, 0);
-					let fullRange: vscode.Range = new vscode.Range(startPosition, endPosition);
-					console.log(fullRange);
+			const functionName = 'sampleFunction';
+			const functionParameters: string[] = []; 
+			if (componentDoc) {
+				const lineToEdit = getLineToAddFunction(functionName, componentDoc);
+
+				if (lineToEdit !== undefined) {
+					addFunction(functionName, componentDoc, lineToEdit, functionParameters);
 				}
-
-			});
+			}
 		}
 	}
 
