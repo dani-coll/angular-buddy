@@ -32,3 +32,7 @@ export function getCurrentComponentName(absolutePath: string): string {
     const pathArray = activeEditorRelativePath.split("/");
     return pathArray[pathArray.length - 1].split('.')[0];
 }
+
+export function getComponentDocument(tsDocuments: vscode.TextDocument[]): vscode.TextDocument | undefined {
+    return tsDocuments.find(doc => Boolean(doc.getText().match('@Component')));
+}
